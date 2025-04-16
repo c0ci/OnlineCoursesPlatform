@@ -1,0 +1,22 @@
+﻿@model OnlineCoursesPlatform.Models.Course
+
+<h2>Създай нов курс</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Category"></label>
+        <input asp-for="Category" class="form-control" />
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LecturerId">ID на лектора</label>
+        <input asp-for="LecturerId" class="form-control" />
+        <span asp-validation-for="LecturerId" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Създай</button>
+</form>

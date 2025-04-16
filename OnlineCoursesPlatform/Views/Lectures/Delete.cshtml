@@ -1,0 +1,16 @@
+﻿@model OnlineCoursesPlatform.Models.Lecture
+
+<h2>Изтриване на лекция</h2>
+
+<p>Сигурен ли си, че искаш да изтриеш тази лекция?</p>
+
+<div>
+    <strong>Заглавие:</strong> @Model.Title <br />
+    <strong>Описание:</strong> @Model.Description
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Изтрий</button>
+    <a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" class="btn btn-secondary">Отказ</a>
+</form>
