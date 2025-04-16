@@ -49,7 +49,7 @@ namespace OnlineCoursesPlatform.Controllers
             return View();
         }
 
-        // POST: Courses/Create
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Course course)
