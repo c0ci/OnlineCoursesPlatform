@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Подаване на решение";
+    var lectureId = ViewBag.LectureId;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Submit" method="post">
+    <input type="hidden" name="lectureId" value="@lectureId" />
+
+    <div class="form-group">
+        <label for="content">Решение:</label>
+        <textarea name="content" class="form-control" rows="5" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Изпрати</button>
+</form>
