@@ -1,0 +1,16 @@
+﻿@model OnlineCoursesPlatform.Models.Submission
+
+<h2>Редакция на решение</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label>Решение:</label>
+        <textarea name="content" class="form-control" rows="6">@Model.Content</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Запази промените</button>
+    <a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.Lecture.CourseId" class="btn btn-secondary mt-2">Отказ</a>
+</form>

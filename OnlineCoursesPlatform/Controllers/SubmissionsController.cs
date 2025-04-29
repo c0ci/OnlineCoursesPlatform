@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineCoursesPlatform.Data;
 using OnlineCoursesPlatform.Models;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace OnlineCoursesPlatform.Controllers
 {
@@ -44,5 +46,53 @@ namespace OnlineCoursesPlatform.Controllers
             TempData["SuccessMessage"] = "Успешно подадено решение!";
             return RedirectToAction("Details", "Courses", new { id = lectureId }); // можеш да смениш къде да редиректне
         }
+
+        // GET: Submissions/Edit/{id}
+        public IActionResult Edit(int id)
+        {
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var submission = _context.Submissions
+                .Include(s => s.Lecture)
+                .FirstOrDefault(s => s.Id == id && s.StudentId == studentId);
+
+
+            if (submission == null)
+            {
+                return NotFound();
+            }
+
+            return View("~/Views/SubmissionsF/Edit.cshtml", submission);
+        }
+
+        // POST: Submissions/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, string content)
+        {
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var submission = _context.Submissions
+                .FirstOrDefault(s => s.Id == id && s.StudentId == studentId);
+
+            if (submission == null)
+            {
+                return NotFound();
+            }
+
+            submission.Content = content;
+            submission.SubmittedAt = DateTime.Now;
+
+            _context.SaveChanges();
+
+            // взимаме курса чрез навигация: Submission → Lecture → CourseId
+            var courseId = _context.Lectures
+                .Where(l => l.Id == submission.LectureId)
+                .Select(l => l.CourseId)
+                .FirstOrDefault();
+
+            TempData["SuccessMessage"] = "Решението беше редактирано успешно!";
+            return RedirectToAction("Details", "Courses", new { id = courseId });
+
+        }
+
     }
 }

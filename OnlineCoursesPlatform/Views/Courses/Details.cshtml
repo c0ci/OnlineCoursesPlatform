@@ -87,6 +87,15 @@ else
                     <div class="alert alert-success mt-2">
                         <strong>Вие вече подадохте решение:</strong><br />
                         @mySubmission.Content <br />
+
+                        <br />
+                        <a asp-controller="Submissions"
+                           asp-action="Edit"
+                           asp-route-id="@mySubmission.Id"
+                           class="btn btn-sm btn-outline-secondary mt-2">
+                            Редактирай решението
+                        </a>
+
                         <small>Дата: @mySubmission.SubmittedAt</small>
                     </div>
                 }
