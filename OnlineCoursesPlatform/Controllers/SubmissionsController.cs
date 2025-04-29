@@ -78,10 +78,20 @@ namespace OnlineCoursesPlatform.Controllers
                 return NotFound();
             }
 
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                ModelState.AddModelError("Content", "Решението не може да бъде празно.");
+                submission.Content = content; // показваме стария текст (ако има)
+                submission.Lecture = _context.Lectures.FirstOrDefault(l => l.Id == submission.LectureId);
+                return View("~/Views/SubmissionsF/Edit.cshtml", submission);
+
+            }
+
             submission.Content = content;
             submission.SubmittedAt = DateTime.Now;
 
             _context.SaveChanges();
+
 
             // взимаме курса чрез навигация: Submission → Lecture → CourseId
             var courseId = _context.Lectures

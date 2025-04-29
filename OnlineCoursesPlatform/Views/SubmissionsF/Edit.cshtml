@@ -8,6 +8,7 @@
 
     <div class="form-group">
         <label>Решение:</label>
+        @Html.ValidationMessage("Content", "", new { @class = "text-danger" })
         <textarea name="content" class="form-control" rows="6">@Model.Content</textarea>
     </div>
 
