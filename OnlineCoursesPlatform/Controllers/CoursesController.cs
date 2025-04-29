@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineCoursesPlatform.Data;
 using OnlineCoursesPlatform.Models;
+using System.Security.Claims;
 
 namespace OnlineCoursesPlatform.Controllers
 {
@@ -35,7 +36,7 @@ namespace OnlineCoursesPlatform.Controllers
 
             ViewBag.Lectures = lectures;
 
-            int studentId = 3;
+            string studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             ViewBag.IsEnrolled = _context.Enrollments
                 .Any(e => e.CourseId == id && e.StudentId == studentId);

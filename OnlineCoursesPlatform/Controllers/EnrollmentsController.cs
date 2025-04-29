@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineCoursesPlatform.Data;
 using OnlineCoursesPlatform.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace OnlineCoursesPlatform.Controllers
 {
+    [Authorize]
     public class EnrollmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,7 +21,12 @@ namespace OnlineCoursesPlatform.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Enroll(int courseId)
         {
-            int studentId = 3;
+            string studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            if (studentId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             bool alreadyEnrolled = _context.Enrollments
                 .Any(e => e.CourseId == courseId && e.StudentId == studentId);
@@ -47,7 +56,7 @@ namespace OnlineCoursesPlatform.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Unenroll(int courseId)
         {
-            int studentId = 3;
+            string studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             var enrollment = _context.Enrollments
                 .FirstOrDefault(e => e.CourseId == courseId && e.StudentId == studentId);
@@ -68,7 +77,7 @@ namespace OnlineCoursesPlatform.Controllers
         }
         public IActionResult MyCourses()
         {
-            int studentId = 3;
+            string studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             var myCourses = _context.Enrollments
                 .Where(e => e.StudentId == studentId)

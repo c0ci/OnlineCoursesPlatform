@@ -9,11 +9,11 @@ using OnlineCoursesPlatform.Data;
 
 #nullable disable
 
-namespace OnlineCoursesPlatform.Data.Migrations
+namespace OnlineCoursesPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250414041930_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250429145009_FixAppUserIdType")]
+    partial class FixAppUserIdType
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,11 @@ namespace OnlineCoursesPlatform.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -140,6 +145,10 @@ namespace OnlineCoursesPlatform.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator().HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -227,27 +236,6 @@ namespace OnlineCoursesPlatform.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OnlineCoursesPlatform.Models.AppUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppUsers");
-                });
-
             modelBuilder.Entity("OnlineCoursesPlatform.Models.Course", b =>
                 {
                     b.Property<int>("Id")
@@ -270,6 +258,22 @@ namespace OnlineCoursesPlatform.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Courses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Category = "Programming",
+                            LecturerId = 1,
+                            Title = "C# Fundamentals"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Category = "Web",
+                            LecturerId = 1,
+                            Title = "Web Development Basics"
+                        });
                 });
 
             modelBuilder.Entity("OnlineCoursesPlatform.Models.Enrollment", b =>
@@ -283,10 +287,15 @@ namespace OnlineCoursesPlatform.Data.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Enrollments");
                 });
@@ -339,6 +348,22 @@ namespace OnlineCoursesPlatform.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Lectures");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CourseId = 1,
+                            Description = "Basics of C#",
+                            Title = "Variables and Data Types"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CourseId = 2,
+                            Description = "Structure and Style",
+                            Title = "HTML & CSS"
+                        });
                 });
 
             modelBuilder.Entity("OnlineCoursesPlatform.Models.Submission", b =>
@@ -365,6 +390,21 @@ namespace OnlineCoursesPlatform.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Submissions");
+                });
+
+            modelBuilder.Entity("OnlineCoursesPlatform.Models.AppUser", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("AppUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -416,6 +456,25 @@ namespace OnlineCoursesPlatform.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OnlineCoursesPlatform.Models.Enrollment", b =>
+                {
+                    b.HasOne("OnlineCoursesPlatform.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineCoursesPlatform.Models.AppUser", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
                 });
 #pragma warning restore 612, 618
         }
