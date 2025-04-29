@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OnlineCoursesPlatform.Data;
 using OnlineCoursesPlatform.Models;
 using System.Security.Claims;
@@ -32,6 +33,17 @@ namespace OnlineCoursesPlatform.Controllers
 
             var lectures = _context.Lectures
                 .Where(l => l.CourseId == id)
+                .Select(l => new Lecture
+                {
+                    Id = l.Id,
+                    Title = l.Title,
+                    Description = l.Description,
+                    CourseId = l.CourseId,
+                    Submissions = _context.Submissions
+                         .Where(s => s.LectureId == l.Id)
+                         .Include(s => s.Student)
+                         .ToList()
+                })
                 .ToList();
 
             ViewBag.Lectures = lectures;
@@ -41,9 +53,16 @@ namespace OnlineCoursesPlatform.Controllers
             ViewBag.IsEnrolled = _context.Enrollments
                 .Any(e => e.CourseId == id && e.StudentId == studentId);
 
+            // Взимаме всички подадени решения от текущия студент
+            var studentSubmissions = _context.Submissions
+                .Where(s => s.StudentId == studentId)
+                .ToList();
+
+            ViewBag.StudentSubmissions = studentSubmissions;
 
             return View(course);
         }
+
         // GET: Courses/Create
         public IActionResult Create()
         {

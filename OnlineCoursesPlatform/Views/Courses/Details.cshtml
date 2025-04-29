@@ -59,33 +59,67 @@ else
     <ul>
         @foreach (var lecture in lectures)
         {
-            <li>
-                <strong>@lecture.Title:</strong> @lecture.Description
+            <li class="mb-4 p-3 border rounded">
+                <h5>@lecture.Title</h5>
+                <p>@lecture.Description</p>
 
                 <a asp-controller="Lectures"
                    asp-action="Edit"
                    asp-route-id="@lecture.Id"
-                   class="btn btn-sm btn-warning ml-2">
+                   class="btn btn-sm btn-warning me-2">
                     Редактирай
                 </a>
 
                 <a asp-controller="Lectures"
                    asp-action="Delete"
                    asp-route-id="@lecture.Id"
-                   class="btn btn-sm btn-danger ml-2">
+                   class="btn btn-sm btn-danger me-2">
                     Изтрий
                 </a>
 
-                <a asp-controller="Submissions"
-                   asp-action="Submit"
-                   asp-route-lectureId="@lecture.Id"
-                   class="btn btn-outline-primary btn-sm ms-2">
-                    Изпрати решение
-                </a>
+                @{
+                    var studentSubmissions = ViewBag.StudentSubmissions as List<OnlineCoursesPlatform.Models.Submission>;
+                    var mySubmission = studentSubmissions?.FirstOrDefault(s => s.LectureId == lecture.Id);
+                }
 
+                @if (mySubmission != null)
+                {
+                    <div class="alert alert-success mt-2">
+                        <strong>Вие вече подадохте решение:</strong><br />
+                        @mySubmission.Content <br />
+                        <small>Дата: @mySubmission.SubmittedAt</small>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Submissions"
+                       asp-action="Submit"
+                       asp-route-lectureId="@lecture.Id"
+                       class="btn btn-outline-primary btn-sm mt-2">
+                        Изпрати решение
+                    </a>
+                }
 
+                <hr />
+                <h6>Решения от други студенти:</h6>
+                @if (lecture.Submissions == null || !lecture.Submissions.Any())
+                {
+                    <p><i>Все още няма подадени решения.</i></p>
+                }
+                else
+                {
+                    <ul>
+                        @foreach (var submission in lecture.Submissions)
+                        {
+                            <li>
+                                <b>Студент:</b> @(submission.Student != null ? submission.Student.UserName : "(Непознат)")
+                                <b>Решение:</b> @submission.Content<br />
+                                <small>@submission.SubmittedAt</small>
+                            </li>
+                        }
+                    </ul>
+                }
             </li>
-
         }
     </ul>
 }
