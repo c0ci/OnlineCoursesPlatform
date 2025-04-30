@@ -43,8 +43,14 @@ namespace OnlineCoursesPlatform.Controllers
             _context.Submissions.Add(submission);
             _context.SaveChanges();
 
+            var lecture = _context.Lectures.FirstOrDefault(l => l.Id == lectureId);
+            if (lecture == null)
+            {
+                return NotFound();
+            }
+
             TempData["SuccessMessage"] = "Успешно подадено решение!";
-            return RedirectToAction("Details", "Courses", new { id = lectureId }); // можеш да смениш къде да редиректне
+            return RedirectToAction("Details", "Courses", new { id = lecture.CourseId });
         }
 
         // GET: Submissions/Edit/{id}

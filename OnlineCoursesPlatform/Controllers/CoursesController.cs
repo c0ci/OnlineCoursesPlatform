@@ -83,7 +83,61 @@ namespace OnlineCoursesPlatform.Controllers
 
             return View(course);
         }
+        public IActionResult Edit(int id)
+        {
+            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+            return View(course);
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Course updatedCourse)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(updatedCourse);
+            }
+
+            var course = _context.Courses.FirstOrDefault(c => c.Id == updatedCourse.Id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            course.Title = updatedCourse.Title;
+            course.Category = updatedCourse.Category;
+
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Admin");
+        }
+        public IActionResult Delete(int id)
+        {
+            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+            return View(course);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            _context.Courses.Remove(course);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Admin");
+        }
 
     }
 }
