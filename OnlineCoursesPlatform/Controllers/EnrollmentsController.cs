@@ -3,6 +3,7 @@ using OnlineCoursesPlatform.Data;
 using OnlineCoursesPlatform.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace OnlineCoursesPlatform.Controllers
@@ -75,17 +76,18 @@ namespace OnlineCoursesPlatform.Controllers
 
             return RedirectToAction("Details", "Courses", new { id = courseId });
         }
+        [Authorize]
         public IActionResult MyCourses()
         {
-            string studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            var myCourses = _context.Enrollments
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var enrollments = _context.Enrollments
+                .Include(e => e.Course)
                 .Where(e => e.StudentId == studentId)
-                .Select(e => e.Course)
                 .ToList();
 
-            return View(myCourses);
+            return View(enrollments);
         }
+
 
 
 

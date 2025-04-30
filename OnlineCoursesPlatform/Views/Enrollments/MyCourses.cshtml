@@ -1,37 +1,18 @@
-﻿@model IEnumerable<OnlineCoursesPlatform.Models.Course>
+﻿@model List<OnlineCoursesPlatform.Models.Enrollment>
 
 <h2>Моите курсове</h2>
 
-@if (!Model.Any())
-{
-    <p>Не си записан в никакви курсове.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Име на курс</th>
-                <th>Категория</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var course in Model)
-            {
-                <tr>
-                    <td>@course.Title</td>
-                    <td>@course.Category</td>
-                    <td>
-                        <a asp-controller="Courses"
-                           asp-action="Details"
-                           asp-route-id="@course.Id"
-                           class="btn btn-info btn-sm">
-                            Виж
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<div class="row">
+    @foreach (var enrollment in Model)
+    {
+        var course = enrollment.Course;
+
+        <div class="col-md-4 mb-4">
+            <div class="course-card h-100">
+                <h4>@course.Title</h4>
+                <p><strong>Категория:</strong> @course.Category</p>
+                <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary mt-2">Прегледай</a>
+            </div>
+        </div>
+    }
+</div>
