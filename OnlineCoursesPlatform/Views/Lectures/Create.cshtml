@@ -16,6 +16,8 @@
         <textarea asp-for="Description" class="form-control"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
+    <input type="hidden" asp-for="CourseId" />
+
 
     <button type="submit" class="btn btn-primary">Добави</button>
 </form>

@@ -1,10 +1,53 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Начало";
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var username = User.Identity?.Name;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>
-        <a asp-controller="Courses" asp-action="Index" class="btn btn-primary">Разгледай курсовете</a>
-    </p>
+<div class="text-center mt-5">
+    <h1 class="display-4">Добре дошъл в <span style="color: #14B8A6;">OnlineCoursesPlatform</span></h1>
+
+    @if (isAuthenticated)
+    {
+        <p class="lead mt-2">Здравей, <strong>@username</strong>! Радваме се, че си тук. 🎓</p>
+    }
+    else
+    {
+        <p class="lead mt-2">Започни своето обучение още сега!</p>
+    }
+
+    <a asp-controller="Courses" asp-action="Index" class="btn btn-lg mt-4" style="background-color: #14B8A6; color: white;">
+         Разгледай курсовете
+    </a>
 </div>
+
+<hr class="my-5" />
+
+<div class="row text-center">
+    <div class="col-md-4 mb-4">
+        <h3>📖 Курсове</h3>
+        <p>Разнообразие от курсове в различни категории – от програмиране до дизайн.</p>
+    </div>
+    <div class="col-md-4 mb-4">
+        <h3>📈 Прогрес</h3>
+        <p>Следи своя напредък и подавай домашни, за да се подобряваш всеки ден.</p>
+    </div>
+    <div class="col-md-4 mb-4">
+        <h3>💬 Обратна връзка</h3>
+        <p>Получавай оценки и насоки от преподаватели или администратори.</p>
+    </div>
+</div>
+
+<div class="d-flex align-items-center justify-content-start p-4 shadow rounded bg-white mt-5">
+    <div style="font-size: 60px; margin-right: 20px;">👨‍💻</div>
+
+    <div>
+        <h4><span style="color: #facc15;">💻</span> Препоръчан курс: <span style="color: #14B8A6;">C# Fundamentals</span></h4>
+        <p>Научи основите на C# и обектно-ориентираното програмиране с практически упражнения и реални примери.</p>
+        <a asp-controller="Courses" asp-action="Details" asp-route-id="1" class="btn btn-sm" style="background-color: #14B8A6; color: white;">
+            Започни курса
+        </a>
+    </div>
+</div>
+
+

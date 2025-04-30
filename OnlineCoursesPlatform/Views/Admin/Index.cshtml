@@ -33,6 +33,10 @@
                                 <a asp-controller="Lectures" asp-action="Delete" asp-route-id="@lecture.Id" class="btn btn-sm btn-danger ms-2">Изтрий</a>
                             </li>
                         }
+                        <a asp-controller="Lectures" asp-action="Create" asp-route-courseId="@course.Id" class="btn btn-sm btn-success mt-2">
+                            + Добави лекция към този курс
+                        </a>
+
                     </ul>
                 </td>
                 <td>

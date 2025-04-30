@@ -29,7 +29,7 @@ namespace OnlineCoursesPlatform.Controllers
             {
                 _context.Lectures.Add(lecture);
                 _context.SaveChanges();
-                return RedirectToAction("Details", "Courses", new { id = lecture.CourseId });
+                return RedirectToAction("Index", "Admin");
             }
 
             ViewBag.CourseId = lecture.CourseId;

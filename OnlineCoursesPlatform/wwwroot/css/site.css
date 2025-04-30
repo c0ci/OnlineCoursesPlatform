@@ -134,3 +134,21 @@ h1, h2, h3, h4 {
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
+
+hr {
+    border-top: 2px solid #14B8A6;
+    width: 60%;
+    margin: auto;
+}
+
+h3 {
+    color: #334155;
+}
+
+.card h3 {
+    color: #334155;
+}
+
+.card p {
+    font-size: 1.1rem;
+}
