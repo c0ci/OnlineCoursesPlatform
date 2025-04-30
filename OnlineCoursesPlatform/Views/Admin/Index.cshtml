@@ -12,6 +12,12 @@
         </tr>
     </thead>
     <tbody>
+        <a asp-controller="Courses"
+           asp-action="Create"
+           class="btn btn-primary mb-4">
+            + Създай нов курс
+        </a>
+
         @foreach (var course in Model)
         {
             <tr>

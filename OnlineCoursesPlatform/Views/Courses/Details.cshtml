@@ -1,138 +1,75 @@
 ﻿@model OnlineCoursesPlatform.Models.Course
 @{
     var lectures = ViewBag.Lectures as List<OnlineCoursesPlatform.Models.Lecture>;
-}
-
-<a asp-controller="Lectures"
-   asp-action="Create"
-   asp-route-courseId="@Model.Id"
-   class="btn btn-success mt-3">
-    + Добави лекция към този курс
-</a>
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
-    </div>
-}
-
-
-<h2>Детайли за курс</h2>
-
-@{
     bool isEnrolled = ViewBag.IsEnrolled != null && (bool)ViewBag.IsEnrolled;
 }
 
-@if (!isEnrolled)
-{
-    <form asp-controller="Enrollments"
-          asp-action="Enroll"
-          method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="courseId" value="@Model.Id" />
-        <button type="submit" class="btn btn-primary">Запиши се</button>
-    </form>
-}
-else
-{
-    <form asp-controller="Enrollments"
-          asp-action="Unenroll"
-          method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="courseId" value="@Model.Id" />
-        <button type="submit" class="btn btn-danger">Отпиши се</button>
-    </form>
-}
-
-
-
-
-<p><strong>Име:</strong> @Model.Title</p>
+<h2>@Model.Title</h2>
 <p><strong>Категория:</strong> @Model.Category</p>
+
+<div class="mb-4">
+    @if (!isEnrolled)
+    {
+        <form asp-controller="Enrollments" asp-action="Enroll" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="courseId" value="@Model.Id" />
+            <button type="submit" class="btn btn-primary">Запиши се</button>
+        </form>
+    }
+    else
+    {
+        <form asp-controller="Enrollments" asp-action="Unenroll" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="courseId" value="@Model.Id" />
+            <button type="submit" class="btn btn-danger">Отпиши се</button>
+        </form>
+    }
+</div>
 
 <hr />
 
-<h3>Лекции в курса:</h3>
+<h4>Лекции</h4>
+
 @if (lectures != null && lectures.Any())
 {
-    <ul>
+    <div class="row">
         @foreach (var lecture in lectures)
         {
-            <li class="mb-4 p-3 border rounded">
-                <h5>@lecture.Title</h5>
-                <p>@lecture.Description</p>
+            <div class="col-md-6 mb-3">
+                <div class="lecture-card p-3">
+                    <h5>@lecture.Title</h5>
+                    <p>@lecture.Description</p>
 
-                <a asp-controller="Lectures"
-                   asp-action="Edit"
-                   asp-route-id="@lecture.Id"
-                   class="btn btn-sm btn-warning me-2">
-                    Редактирай
-                </a>
+                    @{
+                        var studentSubmissions = ViewBag.StudentSubmissions as List<OnlineCoursesPlatform.Models.Submission>;
+                        var mySubmission = studentSubmissions?.FirstOrDefault(s => s.LectureId == lecture.Id);
+                    }
 
-                <a asp-controller="Lectures"
-                   asp-action="Delete"
-                   asp-route-id="@lecture.Id"
-                   class="btn btn-sm btn-danger me-2">
-                    Изтрий
-                </a>
-
-                @{
-                    var studentSubmissions = ViewBag.StudentSubmissions as List<OnlineCoursesPlatform.Models.Submission>;
-                    var mySubmission = studentSubmissions?.FirstOrDefault(s => s.LectureId == lecture.Id);
-                }
-
-                @if (mySubmission != null)
-                {
-                    <div class="alert alert-success mt-2">
-                        <strong>Вие вече подадохте решение:</strong><br />
-                        @mySubmission.Content <br />
-
-                        <br />
-                        <a asp-controller="Submissions"
-                           asp-action="Edit"
-                           asp-route-id="@mySubmission.Id"
-                           class="btn btn-sm btn-outline-secondary mt-2">
-                            Редактирай решението
+                    @if (mySubmission != null)
+                    {
+                        <div class="alert alert-success mt-2">
+                            <strong>Вие вече подадохте решение:</strong><br />
+                            @mySubmission.Content <br />
+                            <small>Дата: @mySubmission.SubmittedAt</small><br />
+                            <a asp-controller="Submissions" asp-action="Edit" asp-route-id="@mySubmission.Id" class="btn btn-sm btn-secondary mt-2">
+                                Редактирай решението
+                            </a>
+                        </div>
+                    }
+                    else if (User.Identity.IsAuthenticated && isEnrolled)
+                    {
+                        <a asp-controller="Submissions" asp-action="Submit" asp-route-lectureId="@lecture.Id" class="btn btn-sm btn-primary mt-2">
+                            Подай решение
                         </a>
+                    }
 
-                        <small>Дата: @mySubmission.SubmittedAt</small>
-                    </div>
-                }
-                else
-                {
-                    <a asp-controller="Submissions"
-                       asp-action="Submit"
-                       asp-route-lectureId="@lecture.Id"
-                       class="btn btn-outline-primary btn-sm mt-2">
-                        Изпрати решение
-                    </a>
-                }
-
-                <hr />
-                <h6>Решения от други студенти:</h6>
-                @if (lecture.Submissions == null || !lecture.Submissions.Any())
-                {
-                    <p><i>Все още няма подадени решения.</i></p>
-                }
-                else
-                {
-                    <ul>
-                        @foreach (var submission in lecture.Submissions)
-                        {
-                            <li>
-                                <b>Студент:</b> @(submission.Student != null ? submission.Student.UserName : "(Непознат)")
-                                <b>Решение:</b> @submission.Content<br />
-                                <small>@submission.SubmittedAt</small>
-                            </li>
-                        }
-                    </ul>
-                }
-            </li>
+                </div>
+            </div>
         }
-    </ul>
+    </div>
 }
+
 else
 {
-    <p>Няма добавени лекции към този курс.</p>
+    <p><i>Няма добавени лекции към този курс.</i></p>
 }

@@ -49,7 +49,7 @@ namespace OnlineCoursesPlatform.Controllers
                 return NotFound();
             }
 
-            TempData["SuccessMessage"] = "Успешно подадено решение!";
+            TempData["SuccessMessage"] = "Домашното беше изпратено успешно!";
             return RedirectToAction("Details", "Courses", new { id = lecture.CourseId });
         }
 

@@ -19,9 +19,9 @@ namespace OnlineCoursesPlatform.Controllers
         {
             var courses = _context.Courses.ToList();
             return View(courses);
-
-
         }
+
+
         public IActionResult Details(int id)
         {
             var course = _context.Courses.FirstOrDefault(c => c.Id == id);
@@ -78,7 +78,8 @@ namespace OnlineCoursesPlatform.Controllers
             {
                 _context.Courses.Add(course);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Курсът беше създаден успешно!";
+                return RedirectToAction("Index", "Admin");
             }
 
             return View(course);
