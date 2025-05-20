@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineCoursesPlatform.Data;
 using OnlineCoursesPlatform.Models;
+using OnlineCoursesPlatform.ViewModels;
 using System.Security.Claims;
 
 namespace OnlineCoursesPlatform.Controllers
@@ -9,59 +11,72 @@ namespace OnlineCoursesPlatform.Controllers
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CoursesController(ApplicationDbContext context)
+
+        public CoursesController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var courses = _context.Courses.ToList();
+            var courses = await _context.Courses
+                .Select(c => new CourseListViewModel
+                {
+                    Id = c.Id,
+                    Title = c.Title,
+                    Category = c.Category
+                })
+                .ToListAsync();
+
             return View(courses);
         }
 
 
-        public IActionResult Details(int id)
+
+        public async Task<IActionResult> Details(int id)
         {
-            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
+            var course = await _context.Courses
+                .Include(c => c.Lectures)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (course == null)
             {
                 return NotFound();
             }
 
-            var lectures = _context.Lectures
-                .Where(l => l.CourseId == id)
-                .Select(l => new Lecture
+            var viewModel = new CourseDetailsViewModel
+            {
+                Id = course.Id,
+                Title = course.Title,
+                Category = course.Category,
+                Description = course.Description,
+                Lectures = course.Lectures.Select(l => new LectureViewModel
                 {
                     Id = l.Id,
                     Title = l.Title,
-                    Description = l.Description,
-                    CourseId = l.CourseId,
-                    Submissions = _context.Submissions
-                         .Where(s => s.LectureId == l.Id)
-                         .Include(s => s.Student)
-                         .ToList()
-                })
-                .ToList();
+                    Description = l.Description
+                }).ToList()
+            };
 
-            ViewBag.Lectures = lectures;
+            var userId = _userManager.GetUserId(User);
 
-            string studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            bool isEnrolled = false;
 
-            ViewBag.IsEnrolled = _context.Enrollments
-                .Any(e => e.CourseId == id && e.StudentId == studentId);
+            if (userId != null)
+            {
+                isEnrolled = await _context.Enrollments
+                    .AnyAsync(e => e.CourseId == id && e.StudentId == userId);
+            }
 
-            // Взимаме всички подадени решения от текущия студент
-            var studentSubmissions = _context.Submissions
-                .Where(s => s.StudentId == studentId)
-                .ToList();
+            ViewBag.IsEnrolled = isEnrolled;
 
-            ViewBag.StudentSubmissions = studentSubmissions;
-
-            return View(course);
+            return View(viewModel);
         }
+
+
 
         // GET: Courses/Create
         public IActionResult Create()

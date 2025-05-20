@@ -1,16 +1,15 @@
-﻿@model List<OnlineCoursesPlatform.Models.Course>
+﻿@model List<OnlineCoursesPlatform.ViewModels.CourseListViewModel>
 
 <h2>Всички курсове</h2>
 
 <div class="row">
     @foreach (var course in Model)
     {
-        <div class="col-md-4 mb-4">
-            <div class="course-card h-100">
-                <h4>@course.Title</h4>
-                <p><strong>Категория:</strong> @course.Category</p>
-                <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary mt-2">Виж детайли</a>
-            </div>
+        <div class="course-card mb-4">
+            <h4>@course.Title</h4>
+            <p>Категория: @course.Category</p>
+            <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary">Виж детайли</a>
         </div>
     }
+
 </div>

@@ -67,10 +67,27 @@ using (var scope = app.Services.CreateScope())
     }
 
     var user = await userManager.FindByEmailAsync(adminEmail);
-    if (user != null && !(await userManager.IsInRoleAsync(user, roleName)))
+    if (user == null)
+    {
+        var adminUser = new AppUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+
+        string adminPassword = "Admin123!";
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, roleName);
+        }
+    }
+    else if (!(await userManager.IsInRoleAsync(user, roleName)))
     {
         await userManager.AddToRoleAsync(user, roleName);
     }
+
 }
 
 app.Run();

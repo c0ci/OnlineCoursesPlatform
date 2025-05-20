@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineCoursesPlatform.Data;
 
@@ -11,9 +12,11 @@ using OnlineCoursesPlatform.Data;
 namespace OnlineCoursesPlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250520210927_SeedMoreData")]
+    partial class SeedMoreData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,10 +243,6 @@ namespace OnlineCoursesPlatform.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("LecturerId")
                         .HasColumnType("int");
 
@@ -260,7 +259,6 @@ namespace OnlineCoursesPlatform.Migrations
                         {
                             Id = 6,
                             Category = "Уеб",
-                            Description = "",
                             LecturerId = 1,
                             Title = "JavaScript Основи"
                         },
@@ -268,7 +266,6 @@ namespace OnlineCoursesPlatform.Migrations
                         {
                             Id = 7,
                             Category = "БД",
-                            Description = "",
                             LecturerId = 1,
                             Title = "Бази от Данни"
                         },
@@ -276,7 +273,6 @@ namespace OnlineCoursesPlatform.Migrations
                         {
                             Id = 8,
                             Category = "Програмиране",
-                            Description = "",
                             LecturerId = 1,
                             Title = "ASP.NET MVC"
                         });

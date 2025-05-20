@@ -1,6 +1,5 @@
-﻿@model OnlineCoursesPlatform.Models.Course
+﻿@model OnlineCoursesPlatform.ViewModels.CourseDetailsViewModel
 @{
-    var lectures = ViewBag.Lectures as List<OnlineCoursesPlatform.Models.Lecture>;
     bool isEnrolled = ViewBag.IsEnrolled != null && (bool)ViewBag.IsEnrolled;
 }
 
@@ -30,10 +29,10 @@
 
 <h4>Лекции</h4>
 
-@if (lectures != null && lectures.Any())
+@if (Model.Lectures != null && Model.Lectures.Any())
 {
     <div class="row">
-        @foreach (var lecture in lectures)
+        @foreach (var lecture in Model.Lectures)
         {
             <div class="col-md-6 mb-3">
                 <div class="lecture-card p-3">
