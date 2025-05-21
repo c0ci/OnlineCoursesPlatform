@@ -36,7 +36,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // The default HSTS value is 30 days.
     app.UseHsts();
 }
 
@@ -87,6 +87,37 @@ using (var scope = app.Services.CreateScope())
     {
         await userManager.AddToRoleAsync(user, roleName);
     }
+
+    // --- LECTURER SETUP ---
+
+    string lecturerEmail = "lecturer@platform.bg";
+    string lecturerPassword = "Lecturer123!";
+
+    if (!await roleManager.RoleExistsAsync("Lecturer"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Lecturer"));
+    }
+
+    var lecturerUser = await userManager.FindByEmailAsync(lecturerEmail);
+    if (lecturerUser == null)
+    {
+        var newLecturer = new AppUser
+        {
+            UserName = lecturerEmail,
+            Email = lecturerEmail,
+            EmailConfirmed = true,
+            FullName = "Demo Lecturer",
+            Role = "Lecturer"
+
+        };
+
+        var result = await userManager.CreateAsync(newLecturer, lecturerPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(newLecturer, "Lecturer");
+        }
+    }
+
 
 }
 
