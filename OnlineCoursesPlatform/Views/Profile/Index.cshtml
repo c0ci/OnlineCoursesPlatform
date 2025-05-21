@@ -1,0 +1,24 @@
+﻿@model OnlineCoursesPlatform.ViewModels.StudentProfileViewModel
+
+<h2>Моят профил</h2>
+<p><strong>Имейл:</strong> @Model.Email</p>
+
+<h4>Записани курсове:</h4>
+
+@if (Model.EnrolledCourses.Any())
+{
+    <ul>
+        @foreach (var course in Model.EnrolledCourses)
+        {
+            <li>
+                <strong>@course.Title</strong> — Категория: @course.Category
+                <br />
+                <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.CourseId" class="btn btn-sm btn-outline-primary mt-1">Преглед на курса</a>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Нямате записани курсове.</p>
+}
