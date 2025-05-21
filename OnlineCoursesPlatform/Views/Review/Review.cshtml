@@ -1,0 +1,31 @@
+﻿@model List<OnlineCoursesPlatform.Models.Submission>
+
+<h2>Подадени решения</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Студент</th>
+            <th>Решение</th>
+            <th>Дата</th>
+            <th>Обратна връзка</th>
+            <th>Оценка</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.StudentId</td>
+                <td>@s.Content</td>
+                <td>@s.SubmittedAt</td>
+                <td>@s.Feedback</td>
+                <td>@s.Grade</td>
+                <td>
+                    <a asp-action="GiveFeedback" asp-route-id="@s.Id" class="btn btn-sm btn-outline-primary">Оцени</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

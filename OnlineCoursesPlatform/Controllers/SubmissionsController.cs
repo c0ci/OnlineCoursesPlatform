@@ -110,5 +110,18 @@ namespace OnlineCoursesPlatform.Controllers
 
         }
 
+        [Authorize(Roles = "Lecturer")]
+        public IActionResult ReviewByLecture(int lectureId)
+        {
+            var submissions = _context.Submissions
+                .Include(s => s.Lecture)
+                .Include(s => s.Student)
+                .Where(s => s.LectureId == lectureId)
+                .ToList();
+
+            return View("~/Views/SubmissionsF/Review.cshtml", submissions);
+        }
+
+
     }
 }

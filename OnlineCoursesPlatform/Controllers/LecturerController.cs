@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OnlineCoursesPlatform.Data;
 using OnlineCoursesPlatform.Models;
+using Microsoft.EntityFrameworkCore;
+
 
 [Authorize(Roles = "Lecturer")]
 public class LecturerController : Controller

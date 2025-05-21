@@ -21,5 +21,8 @@ namespace OnlineCoursesPlatform.Models
         [Required]
         public int LectureId { get; set; }
         public Lecture? Lecture { get; set; }
+        public string? Feedback { get; set; }
+        public double? Grade { get; set; }
+
     }
 }
