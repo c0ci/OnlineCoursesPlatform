@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string Title { get; set; } = null!;
         public string Category { get; set; } = null!;
-        public int LecturerId { get; set; }
+        public string LecturerId { get; set; } = string.Empty;
         public ICollection<Lecture> Lectures { get; set; } = new List<Lecture>();
         public string Description { get; set; } = string.Empty;
 

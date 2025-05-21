@@ -21,9 +21,9 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
 
         // SEED данни – примерни курсове
         builder.Entity<Course>().HasData(
-                new Course { Id = 6, Title = "JavaScript Основи", Category = "Уеб", LecturerId = 1 },
-                new Course { Id = 7, Title = "Бази от Данни", Category = "БД", LecturerId = 1 },
-                new Course { Id = 8, Title = "ASP.NET MVC", Category = "Програмиране", LecturerId = 1 }
+                new Course { Id = 6, Title = "JavaScript Основи", Category = "Уеб", LecturerId = "userId" },
+                new Course { Id = 7, Title = "Бази от Данни", Category = "БД", LecturerId = "userId" },
+                new Course { Id = 8, Title = "ASP.NET MVC", Category = "Програмиране", LecturerId = "userId" }
         );
 
         // SEED данни – примерни лекции

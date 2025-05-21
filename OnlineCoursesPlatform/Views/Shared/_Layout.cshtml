@@ -43,6 +43,13 @@
                             </li>
                         }
 
+                        @if (User.IsInRole("Lecturer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Lecturer" asp-action="Index">Моите курсове (лектор)</a>
+                            </li>
+                        }
+
 
 
                     </ul>
