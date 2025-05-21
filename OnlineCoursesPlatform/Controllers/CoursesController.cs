@@ -20,9 +20,17 @@ namespace OnlineCoursesPlatform.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            var courses = await _context.Courses
+            var query = _context.Courses.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(c =>
+                    c.Title.Contains(searchTerm) || c.Category.Contains(searchTerm));
+            }
+
+            var courses = await query
                 .Select(c => new CourseListViewModel
                 {
                     Id = c.Id,
@@ -33,6 +41,7 @@ namespace OnlineCoursesPlatform.Controllers
 
             return View(courses);
         }
+
 
 
 

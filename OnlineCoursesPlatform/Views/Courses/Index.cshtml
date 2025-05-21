@@ -2,6 +2,11 @@
 
 <h2>Всички курсове</h2>
 
+<form method="get" asp-controller="Courses" asp-action="Index" class="mb-3">
+    <input type="text" name="searchTerm" class="form-control" placeholder="Търси курс..." value="@(Context.Request.Query["searchTerm"])" />
+    <button type="submit" class="btn btn-primary mt-2">Търси</button>
+</form>
+
 <div class="row">
     @foreach (var course in Model)
     {
@@ -11,5 +16,4 @@
             <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary">Виж детайли</a>
         </div>
     }
-
 </div>

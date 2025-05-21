@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OnlineCoursesPlatform.Data;
 using OnlineCoursesPlatform.Models;
 
@@ -7,6 +9,8 @@ namespace OnlineCoursesPlatform.Controllers
     public class LecturesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+
 
         public LecturesController(ApplicationDbContext context)
         {
@@ -14,11 +18,25 @@ namespace OnlineCoursesPlatform.Controllers
         }
 
         // GET: Lectures/Create
-        public IActionResult Create(int courseId)
+        public async Task<IActionResult> Create(int courseId)
         {
+            var userId = _userManager.GetUserId(User);
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            if (course.LecturerId != userId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+
             ViewBag.CourseId = courseId;
             return View();
         }
+
 
         // POST: Lectures/Create
         [HttpPost]
@@ -37,16 +55,30 @@ namespace OnlineCoursesPlatform.Controllers
         }
 
         // GET: Lectures/Edit/5
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var lecture = _context.Lectures.FirstOrDefault(l => l.Id == id);
+            var lecture = await _context.Lectures.FirstOrDefaultAsync(l => l.Id == id);
             if (lecture == null)
             {
                 return NotFound();
             }
 
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == lecture.CourseId);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            var userId = _userManager.GetUserId(User);
+
+            if (course.LecturerId != userId && !User.IsInRole("Admin"))
+            {
+                return Forbid(); // Забрана ако не е негов курс и не е админ
+            }
+
             return View(lecture);
         }
+
 
         // POST: Lectures/Edit/5
         [HttpPost]
