@@ -122,6 +122,42 @@ namespace OnlineCoursesPlatform.Controllers
             return View("~/Views/SubmissionsF/Review.cshtml", submissions);
         }
 
+        [Authorize(Roles = "Lecturer")]
+        public IActionResult GiveFeedback(int id)
+        {
+            var submission = _context.Submissions
+                .Include(s => s.Lecture)
+                .FirstOrDefault(s => s.Id == id);
+
+            if (submission == null)
+            {
+                return NotFound();
+            }
+
+            return View("~/Views/SubmissionsF/GiveFeedback.cshtml", submission);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Lecturer")]
+        public IActionResult GiveFeedback(int id, string feedback, double? grade)
+        {
+            var submission = _context.Submissions
+                .FirstOrDefault(s => s.Id == id);
+
+            if (submission == null)
+            {
+                return NotFound();
+            }
+
+            submission.Feedback = feedback;
+            submission.Grade = grade;
+
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Обратната връзка беше записана успешно.";
+            return RedirectToAction("ReviewByLecture", new { lectureId = submission.LectureId });
+        }
 
     }
 }

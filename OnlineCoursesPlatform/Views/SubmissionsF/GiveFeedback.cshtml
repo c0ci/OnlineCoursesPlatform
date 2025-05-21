@@ -1,0 +1,19 @@
+﻿@model OnlineCoursesPlatform.Models.Submission
+
+<h2>Дай обратна връзка</h2>
+
+<form asp-action="GiveFeedback" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label for="feedback">Коментар:</label>
+        <textarea name="feedback" class="form-control">@Model.Feedback</textarea>
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="grade">Оценка:</label>
+        <input type="number" name="grade" step="0.1" class="form-control" value="@Model.Grade" />
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Запиши</button>
+</form>
