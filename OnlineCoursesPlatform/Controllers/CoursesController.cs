@@ -56,6 +56,24 @@ namespace OnlineCoursesPlatform.Controllers
                 return NotFound();
             }
 
+            var userId = _userManager.GetUserId(User);
+
+            bool isEnrolled = false;
+            List<Submission> studentSubmissions = new();
+
+            if (userId != null)
+            {
+                // Проверка дали е записан
+                isEnrolled = await _context.Enrollments
+                    .AnyAsync(e => e.CourseId == id && e.StudentId == userId);
+
+                // Зареждаме всички решения на този студент
+                studentSubmissions = await _context.Submissions
+                    .Where(s => s.StudentId == userId)
+                    .ToListAsync();
+            }
+
+            // Пълним ViewModel
             var viewModel = new CourseDetailsViewModel
             {
                 Id = course.Id,
@@ -67,18 +85,9 @@ namespace OnlineCoursesPlatform.Controllers
                     Id = l.Id,
                     Title = l.Title,
                     Description = l.Description
-                }).ToList()
+                }).ToList(),
+                StudentSubmissions = studentSubmissions
             };
-
-            var userId = _userManager.GetUserId(User);
-
-            bool isEnrolled = false;
-
-            if (userId != null)
-            {
-                isEnrolled = await _context.Enrollments
-                    .AnyAsync(e => e.CourseId == id && e.StudentId == userId);
-            }
 
             ViewBag.IsEnrolled = isEnrolled;
 

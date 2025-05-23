@@ -12,10 +12,12 @@ namespace OnlineCoursesPlatform.Controllers
         private readonly UserManager<AppUser> _userManager;
 
 
-        public LecturesController(ApplicationDbContext context)
+        public LecturesController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
+
 
         // GET: Lectures/Create
         public async Task<IActionResult> Create(int courseId)

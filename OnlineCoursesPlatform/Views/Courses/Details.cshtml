@@ -34,15 +34,12 @@
     <div class="row">
         @foreach (var lecture in Model.Lectures)
         {
+            var mySubmission = Model.StudentSubmissions.FirstOrDefault(s => s.LectureId == lecture.Id);
+
             <div class="col-md-6 mb-3">
                 <div class="lecture-card p-3">
                     <h5>@lecture.Title</h5>
                     <p>@lecture.Description</p>
-
-                    @{
-                        var studentSubmissions = ViewBag.StudentSubmissions as List<OnlineCoursesPlatform.Models.Submission>;
-                        var mySubmission = studentSubmissions?.FirstOrDefault(s => s.LectureId == lecture.Id);
-                    }
 
                     @if (mySubmission != null)
                     {
@@ -50,26 +47,36 @@
                             <strong>Вие вече подадохте решение:</strong><br />
                             @mySubmission.Content <br />
                             <small>Дата: @mySubmission.SubmittedAt</small><br />
+
+                            @if (!string.IsNullOrWhiteSpace(mySubmission.Feedback) || mySubmission.Grade != null)
+                            {
+                                <hr />
+                                <strong>Обратна връзка от лектора:</strong>
+
+                                <br />
+                                @mySubmission.Feedback <br />
+                                @if (mySubmission.Grade != null)
+                                {
+                                    <strong>Оценка:</strong> @mySubmission.Grade
+                                }
+                            }
+
                             <a asp-controller="Submissions" asp-action="Edit" asp-route-id="@mySubmission.Id" class="btn btn-sm btn-secondary mt-2">
                                 Редактирай решението
                             </a>
                         </div>
                     }
-
                     else if (User.Identity.IsAuthenticated && isEnrolled)
                     {
                         <a asp-controller="Submissions" asp-action="Submit" asp-route-lectureId="@lecture.Id" class="btn btn-sm btn-primary mt-2">
                             Подай решение
                         </a>
                     }
-
                 </div>
             </div>
         }
     </div>
 }
-
-
 else
 {
     <p><i>Няма добавени лекции към този курс.</i></p>
