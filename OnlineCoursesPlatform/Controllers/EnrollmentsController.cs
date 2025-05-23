@@ -22,12 +22,12 @@ namespace OnlineCoursesPlatform.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Enroll(int courseId)
         {
-            string studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            if (studentId == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "Account");
+                return Challenge();
             }
+
+            string studentId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             bool alreadyEnrolled = _context.Enrollments
                 .Any(e => e.CourseId == courseId && e.StudentId == studentId);
@@ -52,6 +52,7 @@ namespace OnlineCoursesPlatform.Controllers
 
             return RedirectToAction("Details", "Courses", new { id = courseId });
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
